@@ -1,0 +1,34 @@
+version: "3"
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports: 
+      - "80:80"
+    networks:
+      - internal
+    volumes:
+      - ./app/:/var/www/html/
+      - ./logs/nginx:/var/log/nginx/
+  php:
+    image: php:fpm-alpine
+    networks:
+      - internal
+    volumes:
+      - ./app/:/var/www/html/
+      - ./logs/php.log:/var/log/fpm-php.www.log
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: qwertyuiop
+      MYSQL_DATABASE: wordpress 
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: qwertyuiop
+    ports:
+      - 3306:3306
+    networks:
+      - internal
+networks:
+  internal:
+    driver: bridge
